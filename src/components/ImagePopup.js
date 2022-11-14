@@ -1,18 +1,20 @@
-function ImagePopup({ card, onClose }) {
+import React from 'react';
+
+function ImagePopup(props) {
   return (
-    <section className={`popup popup_image_zoom' ${card && "popup_opened"}`}>
+    <section className={props.card.opened ? 'popup popup_opened' : 'popup'} onClick={props.onClose}>
       <div className="popup__box">
         <button
           className="popup__close"
           type="button"
-          onClick={onClose}>
+          onClick={props.onClose}>
         </button>
         <img
           className="popup__image"
-          src={card ? card.link : ""}
-          alt={card ? card.name : ""}
+          src={props.card ? props.card.link : ""}
+          alt={props.card ? props.card.name : ""}
         />
-        <h2 className="popup__caption">{card?.name ?? ""}</h2>
+        <h2 className="popup__caption">{props.card?.name ?? ""}</h2>
       </div>
     </section>
   );

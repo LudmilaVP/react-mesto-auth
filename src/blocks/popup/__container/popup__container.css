@@ -5,8 +5,12 @@
   border-radius: 10px;
   width: 100%;
   max-width: 430px;
+  min-height: 181px;
   position: fixed;
   padding: 34px 36px 37px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 @media screen and (max-width: 768px) {

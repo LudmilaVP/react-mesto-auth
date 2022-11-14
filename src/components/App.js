@@ -2,11 +2,11 @@ import React from "react";
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import api from '../utils/api.js';
-import * as auth from '../utils/auth.js';
+import * as auth from '../utils/auth';
 import Header from "./Header.js";
 import Footer from "./Footer.js";
 import Main from "./Main.js";
-import PopupWithForm from "./PopupWithForm.js";
+//import PopupWithForm from "./PopupWithForm.js";
 import ImagePopup from "./ImagePopup.js";
 import AddPlacePopup from './AddPlacePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
@@ -23,7 +23,7 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState(null);
+  const [selectedCard, setSelectedCard] = React.useState({ img: '', alt: '', opened: false });
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
   const [currentPath, setCurrentPath] = React.useState('/');
@@ -72,16 +72,13 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      return;
-    }
-    auth
-      .getContent(jwt)
+    auth.tokenCheck(localStorage.getItem('token'))
       .then((data) => {
-        setAuthorizationEmail(data.data.email);
-        setLoggedIn(true);
-        history.push('/');
+        if (data) {
+          setUserEmail(data.data.email);
+          setLoggedIn(true);
+          history.push('/');
+        }
       })
       .catch((err) => console.log(err));
   }, [])
@@ -168,31 +165,32 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
-    setSelectedCard(undefined);
+    setSelectedCard({ src: '', alt: '', opened: false });
+    setInfoTooltipOpen({ opened: false, success: false });
   }
 
   function handleLogout() {
     localStorage.removeItem('token');
     setUserEmail('');
     setLoggedIn(false);
-    history.push('/sign-in');
-    setCurrentPath('/sign-in');
+    history.push('/');
+    setCurrentPath('/');
   }
 
   function handleSignupSubmit(email, password) {
-    auth
-      .register(email, password)
+    auth.register(email, password)
       .then(result => {
         if (result) {
           setUserEmail(result.data.email);
           setInfoTooltipOpen({ opened: true, success: true })
           setLoggedIn(true);
-          history.push('/sign-in');
-          setCurrentPath('/sign-in');
+          history.push('/');
+          setCurrentPath('/');
         }
       })
       .catch((err) => {
         console.log(err);
+        setInfoTooltipOpen({ opened: true, success: false })
       })
   }
 
@@ -255,18 +253,14 @@ function App() {
           onClose={closeAllPopups}
           onUpdateAvatar={handleUpdateUserAvatar}
         />
-        <PopupWithForm
-          name="delete"
-          title="Вы уверены?"
-          onClose={closeAllPopups}
-          buttonName="Да"
-        ></PopupWithForm>
+
         <ImagePopup onClose={closeAllPopups} card={selectedCard} />
         <InfoTooltip
-          isOpen={isInfoTooltipOpen.opened}
           onClose={closeAllPopups}
+          isOpen={isInfoTooltipOpen.opened}
           statusImage={isInfoTooltipOpen.success ? successImage : failImage}
-          title={isInfoTooltipOpen.success ? 'Вы успешно зарегистрировались!' : 'Что-то пошло не так! Попробуйте ещё раз'} />
+          title={isInfoTooltipOpen.success ? 'Вы успешно зарегистрировались!' : 'Что-то пошло не так! Попробуйте ещё раз'}
+        />
       </div>
     </CurrentUserContext.Provider>
   );
