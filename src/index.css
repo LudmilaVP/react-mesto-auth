@@ -43,3 +43,10 @@
 @import url(./blocks/element/__group-like/element__group-like.css);
 @import url(./blocks/element/__like/element__like_counter.css);
 @import url(./blocks/element/__delete/_active/element__delete_active.css);
+@import url(./blocks/popup/__status-caption/popup__status-caption.css);
+@import url(./blocks/popup/__status-image/popup__status-image.css);
+@import url(./blocks/form/form.css);
+@import url(./blocks/form/__button/form__button.css);
+@import url(./blocks/form/__caption/form__caption.css);
+@import url(./blocks/form/__item/form__item.css);
+@import url(./blocks/form/__title/form__title.css);
