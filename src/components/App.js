@@ -33,26 +33,15 @@ function App() {
   const history = useHistory();
 
   React.useEffect(() => {
-    api
-      .getInitialCards()
-      .then((initialCards) => {
+    if (loggedIn) {
+      Promise.all([api.getInitialCards(), api.getUserProfile()])
+      .then(([initialCards, currentUserData]) => {
         setCards(initialCards);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  React.useEffect(() => {
-    api
-      .getUserProfile()
-      .then((currentUserData) => {
         setCurrentUser(currentUserData);
       })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+      .catch(err => console.log(err))
+    }
+  }, [loggedIn])
 
   React.useEffect(() => {
     function handleEscClose(e) {
@@ -207,6 +196,7 @@ function App() {
       })
       .catch((err) => {
         console.log(err);
+        setInfoTooltipOpen({ opened: true, success: false })
       })
   }
 
@@ -225,7 +215,7 @@ function App() {
           <Route path='/sign-up'>
             <Register onSignup={handleSignupSubmit} onPathChange={handlePathChange} />
           </Route>
-          <ProtectedRoute path='/'
+          <ProtectedRoute exact path='/'
             loggedIn={loggedIn}
             component={Main}
             onEditAvatar={handleEditAvatarClick}
