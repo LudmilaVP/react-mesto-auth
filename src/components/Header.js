@@ -1,26 +1,32 @@
 import logo from "../images/header__logo.svg";
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 
-function Header(props) {
-  const newPath = props.path === '/' || props.path === '/sign-up' ? '/sign-in' : '/sign-up';
-  const linkName = { '/': 'Выйти', '/sign-up': 'Войти', '/sign-in': 'Регистрация' }
-  const handleLogout = () => { props.onLogout() };
-
+function Header({ loggedIn, userEmail, onLogout }) {
   return (
     <header className="header">
-      <img className="header__logo" src={logo} alt="Логотип Место" />
-      {props.path === '/' ?
+      <img src={logo} alt="Логотип сайта Mesto" className="header__logo" />
+      {!loggedIn ? (
+        <nav>
+          <Route path="/sign-in">
+            <Link className="header__link" to="/sign-up">
+              Регистрация
+            </Link>
+          </Route>
+          <Route path="/sign-up">
+            <Link className="header__button" to="/sign-in">
+              Войти
+            </Link>
+          </Route>
+        </nav>
+      ) : (
         <div className="header__menu">
-          <a className="header__link header__link_type_email" href="mailto:liudmila.lupandina@yandex.ru">{props.userEmail}</a>
-          <Link className="header__link header__link_type_exit" to={newPath} onClick={handleLogout}>
-            {linkName[props.path]}
-          </Link>
-        </div> :
-        <Link className="header__link" to={newPath}>
-          {linkName[props.path]}
-        </Link>
-      }
+          <p className="header__email">{userEmail}</p>
+          <button onClick={onLogout} className="header__button" type="button">
+            Выйти
+          </button>
+        </div>
+      )}
     </header>
   );
 }

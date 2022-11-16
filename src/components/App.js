@@ -1,12 +1,11 @@
 import React from "react";
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory, Redirect } from 'react-router-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import api from '../utils/api.js';
 import * as auth from '../utils/auth';
 import Header from "./Header.js";
 import Footer from "./Footer.js";
-import Main from "./Main.js";
-//import PopupWithForm from "./PopupWithForm.js";
+import Main from './Main';
 import ImagePopup from "./ImagePopup.js";
 import AddPlacePopup from './AddPlacePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
@@ -26,7 +25,6 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState({ img: '', alt: '', opened: false });
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
-  const [currentPath, setCurrentPath] = React.useState('/');
   const [isInfoTooltipOpen, setInfoTooltipOpen] = React.useState({ opened: false, success: false });
   const [userEmail, setUserEmail] = React.useState('');
   const [loggedIn, setLoggedIn] = React.useState(false);
@@ -35,11 +33,11 @@ function App() {
   React.useEffect(() => {
     if (loggedIn) {
       Promise.all([api.getInitialCards(), api.getUserProfile()])
-      .then(([initialCards, currentUserData]) => {
-        setCards(initialCards);
-        setCurrentUser(currentUserData);
-      })
-      .catch(err => console.log(err))
+        .then(([initialCards, currentUserData]) => {
+          setCards(initialCards);
+          setCurrentUser(currentUserData);
+        })
+        .catch(err => console.log(err))
     }
   }, [loggedIn])
 
@@ -130,10 +128,6 @@ function App() {
       });
   }
 
-  function handlePathChange(newPath) {
-    setCurrentPath(newPath);
-  }
-
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
   }
@@ -163,7 +157,6 @@ function App() {
     setUserEmail('');
     setLoggedIn(false);
     history.push('/');
-    setCurrentPath('/');
   }
 
   function handleSignupSubmit(email, password) {
@@ -174,7 +167,6 @@ function App() {
           setInfoTooltipOpen({ opened: true, success: true })
           setLoggedIn(true);
           history.push('/');
-          setCurrentPath('/');
         }
       })
       .catch((err) => {
@@ -191,7 +183,6 @@ function App() {
           setUserEmail(email);
           setLoggedIn(true);
           history.push('/');
-          setCurrentPath('/');
         }
       })
       .catch((err) => {
@@ -206,18 +197,12 @@ function App() {
         <Header
           userEmail={userEmail}
           onLogout={handleLogout}
-          path={currentPath}
+          loggedIn={loggedIn}
         />
         <Switch>
-          <Route path='/sign-in'>
-            <Login onSignin={handleSigninSubmit} onPathChange={handlePathChange} />
-          </Route>
-          <Route path='/sign-up'>
-            <Register onSignup={handleSignupSubmit} onPathChange={handlePathChange} />
-          </Route>
           <ProtectedRoute exact path='/'
-            loggedIn={loggedIn}
             component={Main}
+            loggedIn={loggedIn}
             onEditAvatar={handleEditAvatarClick}
             onEditProfile={handleEditProfileClick}
             onAddPlace={handleAddPlaceClick}
@@ -226,6 +211,21 @@ function App() {
             onCardDelete={handleCardDelete}
             cards={cards}
           />
+          <Route path="/sign-in">
+            <Login
+              onSignin={handleSigninSubmit}
+            />
+          </Route>
+
+          <Route path="/sign-up">
+            <Register
+              onSignup={handleSignupSubmit}
+            />
+          </Route>
+
+          <Route exact path="*">
+            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+          </Route>
         </Switch>
         <Footer />
         <EditProfilePopup

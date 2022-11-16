@@ -9,7 +9,7 @@
     color: #000000;
 }
 
-@media screen and (max-width: 520px) {
+@media screen and (max-width: 769px) {
     .popup__status-caption {
         font-size: 20px;
         line-height: 24px;

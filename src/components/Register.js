@@ -14,12 +14,6 @@ function Register(props) {
         props.onSignup(email, password);
     }
 
-    const handlePathChange = (newPath) => { props.onPathChange(newPath) };
-
-    React.useEffect(() => {
-        handlePathChange('/sign-up')
-    }, []);
-
     return (
         <div>
             <form className="form" onSubmit={handleSubmit}>
