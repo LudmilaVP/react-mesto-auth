@@ -1,18 +1,18 @@
-# Название проекта: Mesto (реализация с использованием JavaScript-библиотеки React)
+# Mesto (implementation with React)
 
-## Описание
+## Description
 
-Сайт, на котором пользователь может редактировать интерактивную форму, вводить любое имя и профессию, менять аватар, добавлять картинки на сервер, удалять, лайкать.
+A website where the user can edit an interactive form, enter any name and profession, change the avatar, add pictures to the server, delete, like.
 
-## Стек
+## Stack
 
 - HTML
 - CSS
 - Javascript
 
-## Реализация
+## Implementation
 
-- Портирование проекта Mesto на «React».
-- HTML разметка портирована в JSX.
-- Портированы стили.
-- Для отображения карточек и данных профиля реализованы запросы к API.
+- Porting the Mesto project to "React".
+- HTML markup is ported to JSX.
+- Ported styles.
+- API requests are implemented to display cards and profile data.
